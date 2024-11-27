@@ -9,6 +9,7 @@ import com.api.utils.JsonLoader;
 import com.api.utils.Routes;
 import org.testng.annotations.BeforeClass;
 
+//TESTING API
 public class ApiGitHubTests {
 
     private String baseURI;
