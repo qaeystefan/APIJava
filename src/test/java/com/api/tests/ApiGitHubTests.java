@@ -4,10 +4,11 @@ import com.api.utils.ConfigLoader;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
-import org.testng.annotations.Test;
 import com.api.utils.JsonLoader;
 import com.api.utils.Routes;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 
 //TESTING API
 public class ApiGitHubTests {
@@ -59,7 +60,6 @@ public class ApiGitHubTests {
     public void testUpdateRequest() {
 
         String updateBody = JsonLoader.loadJson("updateBody.json");
-
         Response response = RestAssured
                 .given()
                 .header("Authorization", "Bearer " + bearerToken)
