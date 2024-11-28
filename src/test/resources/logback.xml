@@ -1,19 +1,11 @@
 <configuration>
-    <!-- Console Appender to print logs to console -->
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Set log level for RestAssured request/response logging -->
-    <logger name="io.restassured" level="DEBUG"/>
-
-    <!-- Set log level for RestAssured internal logging (e.g., logging HTTP requests and responses) -->
-    <logger name="io.restassured.filter" level="TRACE"/>
-
-    <!-- Root logger configuration -->
-    <root level="INFO">
-        <appender-ref ref="Console"/>
+    <root level="debug">
+        <appender-ref ref="CONSOLE" />
     </root>
 </configuration>

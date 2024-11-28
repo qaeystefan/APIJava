@@ -1,85 +1,75 @@
 package com.api.tests;
 
-import com.api.utils.ConfigLoader;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
+import controllers.Repository;
+import helpers.ApiHelper;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.testng.Assert;
-import com.api.utils.JsonLoader;
-import com.api.utils.Routes;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-
-//TESTING API
 public class ApiGitHubTests {
-
-    private String baseURI;
-    private String bearerToken;
 
     @BeforeClass
     public void setup() {
-
-        baseURI = ConfigLoader.getProperty("baseURI");
-        bearerToken = ConfigLoader.getProperty("bearerToken");
-        RestAssured.baseURI = baseURI;
+        ApiHelper.setup();
     }
 
-
-    @Test
+    @Test(priority = 0)
     public void testPostRequest() {
 
-        String requestBody = JsonLoader.loadJson("postBody.json");
-        Response response = RestAssured
-                .given()
-                .header("Authorization", "Bearer " + bearerToken)
-                .body(requestBody)
-                .post(Routes.POST_ENDPOINT);
+        String repositoryName = "Testing3";
 
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 201, "Expected status code 201");
+        Pair<Integer, Repository.RepositoryResponse> result = ApiHelper.createRepository(repositoryName);
+//        int statusCode = result.getLeft();
+//        Repository.RepositoryResponse repositoryResponse = result.getRight();
+
+        Assert.assertEquals(result.getLeft(), HttpStatus.SC_CREATED, "Expected status code 201");
+        Assert.assertEquals(result.getRight().getName(), repositoryName, "Expected repository name should be " + repositoryName);
     }
 
-    @Test
+    @Test(priority = 1)
     public void testGetRequest() {
 
-        Response response = RestAssured
-                .given()
-                .header("Authorization", "Bearer " + bearerToken)
-                .get(Routes.GET_ENDPOINT);
+        String repositoryName = "Testing1";
 
-        int statusCode = response.getStatusCode();
-//        String responseBody = response.getBody().asString();
-//        System.out.println("Response: " + responseBody);
-//        System.out.println("Status Code: " + statusCode);
+        Pair<Integer, String> result = ApiHelper.getRepository(repositoryName);
+        String responseBody = result.getRight();
 
-        Assert.assertEquals(statusCode, 200, "Expected status code 200");
-//        Assert.assertTrue(responseBody.contains("repoApi"), "Response body should contain 'repoApi'");
+        Assert.assertEquals(result.getLeft(), HttpStatus.SC_OK, "Expected status code 200");
+        Assert.assertTrue(responseBody.contains(repositoryName), "Response body should contain the repository name");
     }
 
-    @Test
+    @Test(priority = 1)
+    public void testPostRequestNegative() {
+
+        String repositoryName = "Testing1";
+
+        Pair<Integer, Repository.RepositoryResponse> result = ApiHelper.createRepository(repositoryName);
+        Assert.assertEquals(result.getLeft(), HttpStatus.SC_UNPROCESSABLE_ENTITY, "Expected status code 422");
+    }
+
+    @Test(priority = 2)
     public void testUpdateRequest() {
+        String repoName = "Testing3";
+        String updatedRepoName = "updatedTesting1";
 
-        String updateBody = JsonLoader.loadJson("updateBody.json");
-        Response response = RestAssured
-                .given()
-                .header("Authorization", "Bearer " + bearerToken)
-                .body(updateBody)
-                .patch(Routes.UPDATE_ENDPOINT);
+        Pair<Integer, Repository.RepositoryResponse> result = ApiHelper.updateRepository(repoName, updatedRepoName);
+        Repository.RepositoryResponse repositoryResponse = result.getRight();
 
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 200, "Expected status code 200");
+        Assert.assertEquals(result.getLeft(), HttpStatus.SC_OK, "Expected status code 200");
+        Assert.assertEquals(repositoryResponse.getName(), updatedRepoName, "Repository name should match the updated name");
     }
 
-    @Test
+    @Test(priority = 3)
     public void testDeleteRequest() {
+        String repoName = "Testing1";
 
-        Response response = RestAssured
-                .given()
-                .header("Authorization", "Bearer " + bearerToken)
-                .delete(Routes.DELETE_ENDPOINT);
+        Pair<Integer, String> result = ApiHelper.deleteRepository(repoName);
+        String responseBody = result.getRight();
 
-        int statusCode = response.getStatusCode();
-        Assert.assertEquals(statusCode, 204, "Expected status code 204");
+        Assert.assertEquals(result.getLeft(), HttpStatus.SC_NO_CONTENT, "Expected status code 204");
+        Assert.assertTrue(responseBody.isEmpty(), "Response body should be empty after deletion");
     }
 
 }
