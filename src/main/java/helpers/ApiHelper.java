@@ -73,7 +73,6 @@ public class ApiHelper {
         } else {
             logger.info("Repository retrieved successfully.");
         }
-
         return Pair.of(statusCode, responseBody);
     }
 
@@ -128,4 +127,28 @@ public class ApiHelper {
 
         return Pair.of(statusCode, responseBody);
     }
+
+    // README
+    public static Pair<Integer, String> getRepositoryReadme(String repoName) {
+
+        logger.info("Fetching README for repository: {}", repoName);
+        Response response = RestAssured
+                .given()
+                .header("Authorization", "Bearer " + bearerToken)
+                .get(Routes.GET_REPO + repoName + Routes.GET_README)
+                .then().extract().response();
+
+        int statusCode = response.getStatusCode();
+        String responseBody = response.getBody().asString();
+
+        if (statusCode != 200) {
+            logger.error("Failed to fetch README. Status code: {}", statusCode);
+            LoggingUtils.logApiError(logger, responseBody);
+        } else {
+            logger.info("README fetched successfully.");
+        }
+
+        return Pair.of(statusCode, responseBody);
+    }
+
 }

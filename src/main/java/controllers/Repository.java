@@ -6,6 +6,7 @@ public class Repository {
     public static class RepositoryRequest {
         private String name;
         private Owner ownerObject;
+        private String content;
 
         // Constructor
         public RepositoryRequest(String name) {
@@ -22,6 +23,14 @@ public class Repository {
             this.name = name;
         }
 
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
         public static class Owner {
             private String id;
             private String url;
@@ -32,6 +41,7 @@ public class Repository {
     public static class RepositoryResponse {
         private String id;
         private String name;
+        private String content;
 
         // Getter and Setter for 'id'
         public String getId() {
@@ -42,7 +52,6 @@ public class Repository {
             this.id = id;
         }
 
-        // Getter and Setter for 'name'
         public String getName() {
             return name;
         }
@@ -50,5 +59,15 @@ public class Repository {
         public void setName(String name) {
             this.name = name;
         }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+
     }
 }
